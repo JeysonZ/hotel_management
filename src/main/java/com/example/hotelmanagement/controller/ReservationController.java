@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
+
     @Autowired
     private ReservationService reservationService;
 
@@ -40,7 +40,8 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody ReservationDTO reservationDto) {
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, 
+                                                         @RequestBody ReservationDTO reservationDto) {
         Reservation updatedReservation = reservationService.updateReservation(id, reservationDto);
         if (updatedReservation == null) {
             return ResponseEntity.notFound().build();

@@ -31,7 +31,7 @@ public class ReservationService {
     private ReservationMapper reservationMapper;
 
     @Autowired
-    private InvoiceService invoiceService; // Inyectar InvoiceService
+    private InvoiceService invoiceService;
 
     public Reservation createReservation(ReservationDTO reservationDto) {
         Client client = clientRepository.findById(reservationDto.getClientId()).orElseThrow();
@@ -50,7 +50,6 @@ public class ReservationService {
         reservation.setClient(client);
         reservation.setRoom(room);
 
-        // Generar factura
         invoiceService.generateInvoice(client.getId(), client.getFirstName(), client.getLastName(),
                 client.getPhoneNumber(), room.getId(), room.getType(), room.getPrice());
 
@@ -67,13 +66,12 @@ public class ReservationService {
     }
 
     public Reservation updateReservation(Long id, ReservationDTO reservationDto) {
-        // Buscar la reservación existente
+
         Reservation reservation = reservationRepository.findById(id).orElse(null);
         if (reservation == null) {
             return null;
         }
 
-        // Actualizar solo los campos proporcionados
         if (reservationDto.getCheckInTime() != null) {
             reservation.setCheckInTime(reservationDto.getCheckInTime());
         }
@@ -83,7 +81,6 @@ public class ReservationService {
         }
 
         if (reservationDto.getClientId() != null) {
-            // Verificar si el cliente existe
             Client client = clientRepository.findById(reservationDto.getClientId()).orElseThrow();
             reservation.setClient(client);
         }
@@ -91,21 +88,17 @@ public class ReservationService {
         if (reservationDto.getRoomId() != null) {
             Room room = roomRepository.findById(reservationDto.getRoomId()).orElseThrow();
 
-            // Verificar si la habitación es diferente y si está disponible
             if (!room.equals(reservation.getRoom())) {
                 if (room.getStatus() != RoomStatus.AVAILABLE) {
                     throw new IllegalStateException("Room is not available");
                 }
 
-                // Actualizar la habitación
                 Room oldRoom = reservation.getRoom();
                 if (oldRoom != null) {
-                    // Hacer la habitación antigua disponible
                     oldRoom.setStatus(RoomStatus.AVAILABLE);
                     roomRepository.save(oldRoom);
                 }
-
-                // Establecer la nueva habitación como reservada
+                
                 room.setStatus(RoomStatus.RESERVED);
                 roomRepository.save(room);
 
@@ -113,26 +106,21 @@ public class ReservationService {
             }
         }
 
-        // Guardar y devolver la reservación actualizada
         return reservationRepository.save(reservation);
     }
 
     public void deleteReservation(Long id) {
-        // Buscar la reservación a eliminar
         Reservation reservation = reservationRepository.findById(id).orElse(null);
         if (reservation == null) {
             throw new EntityNotFoundException("Reservation not found");
         }
 
-        // Obtener la habitación asociada a la reservación
         Room room = reservation.getRoom();
         if (room != null) {
-            // Cambiar el estado de la habitación a DISPONIBLE
             room.setStatus(RoomStatus.AVAILABLE);
             roomRepository.save(room);
         }
 
-        // Eliminar la reservación
         reservationRepository.delete(reservation);
     }
 }

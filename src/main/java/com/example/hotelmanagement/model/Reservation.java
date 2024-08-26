@@ -15,11 +15,15 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "reservations")
 public class Reservation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "check_in_time")
     private LocalDateTime checkInTime;
+
+    @Column(name = "check_out_time")
     private LocalDateTime checkOutTime;
 
     @ManyToOne

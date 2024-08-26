@@ -3,17 +3,21 @@ package com.example.hotelmanagement.controller;
 import com.example.hotelmanagement.dto.ClientDTO;
 import com.example.hotelmanagement.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/clients")
 public class ClientController {
+
     @Autowired
     private ClientService clientService;
+
+    @PostMapping
+    public ClientDTO createClient(@RequestBody ClientDTO clientDTO) {
+        return clientService.saveClient(clientDTO);
+    }
 
     @GetMapping
     public List<ClientDTO> getAllClients() {
@@ -23,11 +27,6 @@ public class ClientController {
     @GetMapping("/{id}")
     public ClientDTO getClientById(@PathVariable Long id) {
         return clientService.getClientById(id);
-    }
-
-    @PostMapping
-    public ClientDTO createClient(@RequestBody ClientDTO clientDTO) {
-        return clientService.saveClient(clientDTO);
     }
 
     @PutMapping("/{id}")

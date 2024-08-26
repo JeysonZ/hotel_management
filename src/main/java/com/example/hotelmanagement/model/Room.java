@@ -7,13 +7,21 @@ import lombok.Data;
 @Entity
 @Table(name = "rooms")
 public class Room {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "number")
     private Integer number;
+
+    @Column(name = "type")
     private String type;
-    private RoomStatus status = RoomStatus.AVAILABLE;
+
+    @Column(name = "status")
+    private RoomStatus status;
+
+    @Column(name = "price")
     private Double price;
 }
 

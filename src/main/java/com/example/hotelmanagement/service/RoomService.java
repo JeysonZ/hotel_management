@@ -8,10 +8,8 @@ import com.example.hotelmanagement.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -21,22 +19,20 @@ public class RoomService {
     @Autowired
     private RoomMapper roomMapper;
 
+    public RoomDTO saveRoom(RoomDTO roomDTO) {
+        Room room = roomMapper.toEntity(roomDTO);
+        room.setStatus(RoomStatus.AVAILABLE);
+        return roomMapper.toDTO(roomRepository.save(room));
+    }
+
     public List<RoomDTO> getAllRooms() {
         return roomRepository.findAll().stream()
-                .map(roomMapper::toDTO)
-                .toList();
+                .map(room -> roomMapper.toDTO(room)).toList();
     }
 
     public RoomDTO getRoomById(Long id) {
         return roomRepository.findById(id)
-                .map(roomMapper::toDTO)
-                .orElse(null);
-    }
-
-    public RoomDTO saveRoom(RoomDTO roomDTO) {
-        Room room = roomMapper.toEntity(roomDTO);
-        room.setStatus(RoomStatus.AVAILABLE); // Default status
-        return roomMapper.toDTO(roomRepository.save(room));
+                .map(roomMapper::toDTO).orElse(null);
     }
 
     public Room updateRoomStatus(Long roomId, RoomStatus status) {

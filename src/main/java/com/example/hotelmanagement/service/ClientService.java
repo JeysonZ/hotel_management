@@ -25,14 +25,12 @@ public class ClientService {
 
     public List<ClientDTO> getAllClients() {
         return clientRepository.findAll().stream()
-                .map(client -> clientMapper.toDTO(client))
-                .toList();
+                .map(client -> clientMapper.toDTO(client)).toList();
     }
 
     public ClientDTO getClientById(Long id) {
         return clientRepository.findById(id)
-                .map(clientMapper::toDTO)
-                .orElse(null);
+                .map(clientMapper::toDTO).orElse(null);
     }
 
     public void deleteClient(Long id) {

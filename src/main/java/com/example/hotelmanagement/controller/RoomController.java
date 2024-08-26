@@ -10,13 +10,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
+
     @Autowired
     private RoomService roomService;
+
+    @PostMapping
+    public RoomDTO createRoom(@RequestBody RoomDTO roomDTO) {
+        return roomService.saveRoom(roomDTO);
+    }
 
     @GetMapping
     public List<RoomDTO> getAllRooms() {
@@ -28,13 +33,9 @@ public class RoomController {
         return roomService.getRoomById(id);
     }
 
-    @PostMapping
-    public RoomDTO createRoom(@RequestBody RoomDTO roomDTO) {
-        return roomService.saveRoom(roomDTO);
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<Room> updateRoomStatus(@PathVariable Long id, @RequestBody Map<String, String> statusRequest) {
+    public ResponseEntity<Room> updateRoomStatus(@PathVariable Long id, 
+                                                 @RequestBody Map<String, String> statusRequest) {
         String status = statusRequest.get("status");
         if (status == null || status.isEmpty()) {
             return ResponseEntity.badRequest().build();
